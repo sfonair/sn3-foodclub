@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:        #C9A84C;
+    --gold-light:  #E8C97A;
+    --gold-dim:    #7a6230;
+    --cream:       #F5EFE0;
+    --cream-dark:  #EDE4CF;
+    --ink:         #1A1612;
+    --ink-soft:    #3a302a;
+    --divider:     rgba(201,168,76,0.35);
+    --section-bg:  rgba(201,168,76,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--ink);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Decorative top border ── */
+  .top-rule {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-light), var(--gold), var(--gold-dim), transparent);
+    flex-shrink: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 18px 60px 10px;
+    position: relative;
+  }
+  .club-name {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.1s forwards;
+  }
+  .menu-title {
+    font-family: 'Cinzel', serif;
+    font-size: 52px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    line-height: 1;
+    margin: 4px 0 2px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.25s forwards;
+  }
+  .date-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--gold-light);
+    letter-spacing: 0.12em;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  /* ── Gold ornament ── */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px 0 4px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .ornament-line {
+    height: 1px;
+    width: 120px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+  .ornament-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+  .ornament-dot {
+    width: 3px; height: 3px;
+    background: var(--gold-dim);
+    border-radius: 50%;
+  }
+
+  /* ── Bottom rule (mirrors top) ── */
+  .header-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--divider), transparent);
+    margin: 0 60px;
+    flex-shrink: 0;
+  }
+
+  /* ── Main grid ── */
+  .menu-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+    padding: 0 40px 10px;
+    min-height: 0;
+  }
+
+  /* ── Section ── */
+  .section {
+    padding: 18px 28px 14px;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.9s forwards;
+    display: flex;
+    flex-direction: column;
+  }
+  .section:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 20px; bottom: 20px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--divider) 20%, var(--divider) 80%, transparent);
+  }
+  .section:nth-child(1) { animation-delay: 0.55s; }
+  .section:nth-child(2) { animation-delay: 0.7s;  }
+  .section:nth-child(3) { animation-delay: 0.85s; }
+  .section:nth-child(4) { animation-delay: 1.0s;  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .section-icon {
+    font-size: 18px;
+    margin-bottom: 3px;
+    opacity: 0.75;
+  }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .section-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+  .section-rule {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin: 6px auto 0;
+    opacity: 0.5;
+  }
+
+  /* ── Menu items ── */
+  .items-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .menu-item {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--divider);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .menu-item:last-child { border-bottom: none; }
+
+  .item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.2;
+    flex: 1;
+  }
+  .item-price {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gold-light);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .item-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(245,239,224,0.55);
+    line-height: 1.3;
+  }
+  .item-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 1px;
+  }
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    padding: 1px 5px;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-dim);
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .tag.veg   { border-color: #6aaa64; color: #6aaa64; }
+  .tag.gf    { border-color: #7ab8c9; color: #7ab8c9; }
+  .tag.chef  { border-color: var(--gold); color: var(--gold); }
+
+  /* ── Footer ── */
+  .footer-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--divider), transparent);
+    margin: 0 60px;
+    flex-shrink: 0;
+  }
+  footer {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 70px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .footer-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(201,168,76,0.45);
+    letter-spacing: 0.05em;
+  }
+  .footer-legend {
+    display: flex;
+    gap: 18px;
+  }
+  .legend-item {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    color: rgba(245,239,224,0.4);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend-dot {
+    width: 7px; height: 7px;
+    border-radius: 1px;
+    border: 1px solid currentColor;
+    flex-shrink: 0;
+  }
+  .legend-dot.veg  { color: #6aaa64; }
+  .legend-dot.gf   { color: #7ab8c9; }
+  .legend-dot.chef { color: var(--gold); }
+
+  /* ── Bottom rule ── */
+  .bottom-rule {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-light), var(--gold), var(--gold-dim), transparent);
+    flex-shrink: 0;
+  }
+
+  /* ── Loading / error states ── */
+  .status-overlay {
+    position: fixed; inset: 0;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    z-index: 100;
+    transition: opacity 0.6s;
+  }
+  .status-overlay.hidden { opacity: 0; pointer-events: none; }
+  .status-spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--gold-dim);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  .status-text {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Placeholder shimmer ── */
+  .shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+    border-radius: 3px;
+    height: 14px;
+    margin: 4px 0;
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div class="status-overlay" id="statusOverlay">
+  <div class="status-spinner"></div>
+  <div class="status-text" id="statusText">Loading Today's Menu</div>
+</div>
+
+<div class="top-rule"></div>
+
+<header>
+  <div class="club-name" id="clubName">The Food Club</div>
+  <div class="menu-title">Today's Menu</div>
+  <div class="date-line" id="dateLine"></div>
+  <div class="ornament">
+    <div class="ornament-dot"></div>
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line right"></div>
+    <div class="ornament-dot"></div>
+  </div>
+</header>
+
+<div class="header-rule"></div>
+
+<div class="menu-grid" id="menuGrid">
+  <!-- Sections injected by JS -->
+</div>
+
+<div class="footer-rule"></div>
+<footer>
+  <div class="footer-note" id="footerNote">Please inform your server of any allergies</div>
+  <div class="footer-legend">
+    <div class="legend-item"><div class="legend-dot veg"></div> Vegetarian</div>
+    <div class="legend-item"><div class="legend-dot gf"></div> Gluten Free</div>
+    <div class="legend-item"><div class="legend-dot chef"></div> Chef's Special</div>
+  </div>
+</footer>
+<div class="bottom-rule"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  CONFIGURATION — edit these values
+// ════════════════════════════════════════════════════════
+const CONFIG = {
+  // Paste your Google Sheet's published CSV URL here
+  // See SETUP GUIDE below for instructions
+  sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu_n27wxL6yGkfb7tLkcMBaIjm_ia7CaRXcxOsYHofppEzr6vOCmQ9PrLmrQYqmuuPlQMlZSz6jgs/pub?gid=0&single=true&output=csv",
+
+  // How often to reload data (milliseconds). 5 min = 300000
+  refreshInterval: 300000,
+
+  // Your club's name shown at the top
+  clubName: "The SN3 Food Club",
+
+  // Footer note
+  footerNote: "Please inform Food Club Manager of any allergies",
+
+  // Sections to display (must match column headers in your sheet)
+  // Order here = order on screen
+  sections: ["Specials", "Lunch", "Dinner", "Desserts"],
+
+  // Icon shown above each section title
+  sectionIcons: {
+    "Specials": "✦",
+    "Lunch":    "☀",
+    "Dinner":   "◑",
+    "Desserts": "❧",
+  },
+
+  // Optional subtitle under section title
+  sectionSubs: {
+    "Specials": "Today's Highlights",
+    "Lunch":    "Midday Service",
+    "Dinner":   "Evening Service",
+    "Desserts": "Sweet Endings",
+  }
+};
+
+// ════════════════════════════════════════════════════════
+//  SHEET DATA FORMAT
+//  Your Google Sheet should have these columns (Row 1 = headers):
+//
+//  Section | Name | Description | Price | Tags
+//
+//  Section: one of your CONFIG.sections values
+//  Name:    dish name
+//  Description: short description (optional)
+//  Price:   e.g. $14 or 14.00 (optional)
+//  Tags:    comma-separated from: veg, gf, chef (optional)
+// ════════════════════════════════════════════════════════
+
+// Sample/fallback data shown when sheet is not yet configured
+const SAMPLE_DATA = [
+  { Section:"Specials", Name:"Seared Scallops",      Description:"Cauliflower purée, crispy capers, lemon beurre blanc",  Price:"$34", Tags:"gf,chef" },
+  { Section:"Specials", Name:"Truffle Risotto",       Description:"Arborio, black truffle, aged Parmesan, chive oil",      Price:"$28", Tags:"veg,chef" },
+  { Section:"Specials", Name:"Wagyu Beef Tartare",    Description:"Hand-cut, quail egg, cornichons, sourdough crisps",     Price:"$26", Tags:"chef" },
+
+  { Section:"Lunch",    Name:"Roasted Beet Salad",    Description:"Whipped goat cheese, candied walnuts, sherry vinaigrette", Price:"$18", Tags:"veg,gf" },
+  { Section:"Lunch",    Name:"Pan-Seared Salmon",     Description:"Fennel, fingerling potatoes, dill crème fraîche",       Price:"$29", Tags:"gf" },
+  { Section:"Lunch",    Name:"Club Sandwich",         Description:"Smoked turkey, avocado, heirloom tomato, brioche",      Price:"$22", Tags:"" },
+  { Section:"Lunch",    Name:"Butternut Squash Soup", Description:"Coconut cream, toasted pepitas, smoked paprika",        Price:"$14", Tags:"veg,gf" },
+
+  { Section:"Dinner",   Name:"Filet Mignon 8oz",      Description:"Roasted garlic mashed, asparagus, red wine jus",       Price:"$58", Tags:"gf" },
+  { Section:"Dinner",   Name:"Herb-Crusted Halibut",  Description:"Pea purée, pancetta, wild mushroom ragout",            Price:"$46", Tags:"" },
+  { Section:"Dinner",   Name:"Duck Confit",            Description:"Lentilles du Puy, cherry gastrique, micro herbs",      Price:"$42", Tags:"gf" },
+  { Section:"Dinner",   Name:"Wild Mushroom Tart",    Description:"Gruyère, leek fondue, truffle vinaigrette",            Price:"$32", Tags:"veg" },
+
+  { Section:"Desserts", Name:"Crème Brûlée",          Description:"Madagascar vanilla, seasonal berries",                 Price:"$12", Tags:"veg,gf" },
+  { Section:"Desserts", Name:"Chocolate Fondant",     Description:"Valrhona 70%, salted caramel, vanilla gelato",         Price:"$14", Tags:"veg" },
+  { Section:"Desserts", Name:"Tarte Tatin",           Description:"Caramelised apple, puff pastry, Normande cream",       Price:"$13", Tags:"veg" },
+];
+
+// ════════════════════════════════════════════════════════
+//  RENDERING
+// ════════════════════════════════════════════════════════
+function formatDate() {
+  return new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+}
+
+function parseTags(raw) {
+  if (!raw) return [];
+  return raw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+}
+
+function tagLabel(t) {
+  return { veg: 'Vegetarian', gf: 'Gluten Free', chef: "Chef's Special" }[t] || t.toUpperCase();
+}
+
+function buildSection(title, items) {
+  const icon = CONFIG.sectionIcons[title] || '◆';
+  const sub  = CONFIG.sectionSubs[title]  || '';
+
+  const itemsHTML = items.map(item => {
+    const tags = parseTags(item.Tags || item.tags || '');
+    const tagsHTML = tags.length
+      ? `<div class="item-tags">${tags.map(t => `<span class="tag ${t}">${tagLabel(t)}</span>`).join('')}</div>`
+      : '';
+    const desc  = item.Description || item.description || '';
+    const price = item.Price || item.price || '';
+    const name  = item.Name || item.name || '';
+    return `
+      <div class="menu-item">
+        <div class="item-top">
+          <div class="item-name">${name}</div>
+          ${price ? `<div class="item-price">${price}</div>` : ''}
+        </div>
+        ${desc  ? `<div class="item-desc">${desc}</div>` : ''}
+        ${tagsHTML}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">${icon}</div>
+        <div class="section-title">${title}</div>
+        ${sub ? `<div class="section-sub">${sub}</div>` : ''}
+        <div class="section-rule"></div>
+      </div>
+      <div class="items-list">${itemsHTML}</div>
+    </div>`;
+}
+
+function render(rows) {
+  document.getElementById('clubName').textContent  = CONFIG.clubName;
+  document.getElementById('dateLine').textContent  = formatDate();
+  document.getElementById('footerNote').textContent = CONFIG.footerNote;
+
+  const grid = document.getElementById('menuGrid');
+  grid.innerHTML = CONFIG.sections.map(sec => {
+    const items = rows.filter(r => (r.Section || r.section || '').trim() === sec);
+    return buildSection(sec, items);
+  }).join('');
+
+  // Hide overlay
+  const overlay = document.getElementById('statusOverlay');
+  overlay.classList.add('hidden');
+  setTimeout(() => overlay.style.display = 'none', 700);
+}
+
+// ════════════════════════════════════════════════════════
+//  CSV PARSER (handles quoted fields)
+// ════════════════════════════════════════════════════════
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim());
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let cur = '', inQ = false;
+    for (const ch of line) {
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+      else cur += ch;
+    }
+    vals.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = vals[i] || '');
+    return obj;
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  DATA LOADING
+// ════════════════════════════════════════════════════════
+async function loadData() {
+  const statusText = document.getElementById('statusText');
+  const overlay    = document.getElementById('statusOverlay');
+
+  if (CONFIG.sheetUrl === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+    console.info('No sheet URL configured — showing sample data');
+    render(SAMPLE_DATA);
+    return;
+  }
+
+  try {
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+    statusText.textContent = 'Loading Today\'s Menu';
+
+    const res = await fetch(CONFIG.sheetUrl + '&t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (!rows.length) throw new Error('No data');
+    render(rows);
+  } catch (err) {
+    console.warn('Sheet load failed, using sample data:', err);
+    render(SAMPLE_DATA);
+  }
+}
+
+// Initial load + auto-refresh
+loadData();
+setInterval(loadData, CONFIG.refreshInterval);
+</script>
+</body>
+</html>
