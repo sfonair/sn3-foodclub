@@ -394,7 +394,7 @@
 const CONFIG = {
   // Paste your Google Sheet's published CSV URL here
   // See SETUP GUIDE below for instructions
-  sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu_n27wxL6yGkfb7tLkcMBaIjm_ia7CaRXcxOsYHofppEzr6vOCmQ9PrLmrQYqmuuPlQMlZSz6jgs/pub?gid=0&single=true&output=csv",
+  sheetUrl: "https://opensheet.elk.sh/1h1RNDjyQ_NbfrcwXQGIW8GmD_gywQPmpGb8RSskKeAc/Sheet1",
 
   // How often to reload data (milliseconds). 5 min = 300000
   refreshInterval: 300000,
@@ -570,10 +570,9 @@ async function loadData() {
     overlay.style.display = 'flex';
     statusText.textContent = 'Loading Today\'s Menu';
 
-    const res = await fetch(CONFIG.sheetUrl + '&t=' + Date.now());
+    const res = await fetch(CONFIG.sheetUrl + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
+    const rows = await res.json();
     if (!rows.length) throw new Error('No data');
     render(rows);
   } catch (err) {
