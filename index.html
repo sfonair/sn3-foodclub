@@ -111,7 +111,7 @@
 <div class="bottom-rule"></div>
 <script>
 const CONFIG = {
-  sheetUrl: "https://docs.google.com/spreadsheets/d/1h1RNDjyQ_NbfrcwXQGIW8GmD_gywQPmpGb8RSskKeAc/gviz/tq?tqx=out:json&sheet=Sheet1",
+  sheetUrl: "https://docs.google.com/spreadsheets/d/1h1RNDjyQ_NbfrcwXQGIW8GmD_gywQPmpGb8RSskKeAc/export?format=csv&sheet=Sheet1",
   refreshInterval: 300000,
   clubName: "The SN3 Food Club",
   footerNote: "Please inform Food Club Manager of any allergies",
@@ -210,11 +210,19 @@ async function loadData() {
     overlay.classList.remove('hidden');
     overlay.style.display = 'flex';
     statusText.textContent = 'Loading...';
-    const res = await fetch(CONFIG.sheetUrl + '?t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const rows = await res.json();
-    if (!rows.length) throw new Error('No data');
-    render(rows);
+const res = await fetch(CONFIG.sheetUrl);
+if (!res.ok) throw new Error('HTTP ' + res.status);
+const text = await res.text();
+const lines = text.trim().split('\n');
+const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim());
+const rows = lines.slice(1).map(line => {
+  const vals = line.split(',').map(v => v.replace(/"/g,'').trim());
+  const obj = {};
+  headers.forEach((h,i) => obj[h] = vals[i] || '');
+  return obj;
+});
+if (!rows.length) throw new Error('No data');
+render(rows);
   } catch (err) {
     statusText.textContent = 'ERROR: ' + err.message;
   }
