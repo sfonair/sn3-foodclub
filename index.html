@@ -192,7 +192,22 @@ async function loadData() {
   }
 }
 loadData();
-setInterval(loadData, CONFIG.refreshInterval);
+async function loadData() {
+  const overlay = document.getElementById('statusOverlay');
+  const statusText = document.getElementById('statusText');
+  try {
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+    statusText.textContent = 'Loading...';
+    const res = await fetch(CONFIG.sheetUrl + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if (!rows.length) throw new Error('No data');
+    render(rows);
+  } catch (err) {
+    statusText.textContent = 'ERROR: ' + err.message;
+  }
+}
 </script>
 </body>
 </html>
