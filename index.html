@@ -111,7 +111,7 @@
 <div class="bottom-rule"></div>
 <script>
 const CONFIG = {
-  sheetUrl: "https://opensheet.elk.sh/1h1RNDjyQ_NbfrcwXQGIW8GmD_gywQPmpGb8RSskKeAc/Sheet1",
+  sheetUrl: "https://docs.google.com/spreadsheets/d/1h1RNDjyQ_NbfrcwXQGIW8GmD_gywQPmpGb8RSskKeAc/gviz/tq?tqx=out:json&sheet=Sheet1",
   refreshInterval: 300000,
   clubName: "The SN3 Food Club",
   footerNote: "Please inform Food Club Manager of any allergies",
@@ -181,11 +181,22 @@ async function loadData() {
   try {
     overlay.classList.remove('hidden');
     overlay.style.display = 'flex';
-    const res = await fetch(CONFIG.sheetUrl + '?t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const rows = await res.json();
-    if (!rows.length) throw new Error('No data');
-    render(rows);
+    const res = await fetch(CONFIG.sheetUrl);
+if (!res.ok) throw new Error('HTTP ' + res.status);
+const text = await res.text();
+const json = JSON.parse(text.substring(47).slice(0,-2));
+const rows = json.table.rows.map(r => {
+  const cols = r.c;
+  return {
+    Section:     cols[0]?.v || '',
+    Name:        cols[1]?.v || '',
+    Description: cols[2]?.v || '',
+    Price:       cols[3]?.v || '',
+    Tags:        cols[4]?.v || ''
+  };
+});
+if (!rows.length) throw new Error('No data');
+render(rows);
   } catch (err) {
     console.warn('Sheet load failed, using sample data:', err);
     render(SAMPLE_DATA);
